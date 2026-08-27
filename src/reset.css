@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Space+Grotesk:wght@300..700&display=swap');
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* fonts */
+  --font-inter: 'Inter', sans-serif;
+  --font-space-grotesk: 'Space Grotesk', sans-serif;
+  --font-roboto-mono: 'Roboto Mono', monospace;
+  --font-16: 1.6rem;
+  --font-18: 1.8rem;
+  --font-24: 2.4rem;
+  --font-32: 3.2rem;
+  --font-80: 8rem;
+
+  /* spacings */
+  --spacing-4: 0.4rem;
+  --spacing-8: 0.5rem;
+  --spacing-16: 1.6rem;
+  --spacing-20: 2rem;
+  --spacing-24: 2.4rem;
+  --spacing-32: 3.2rem;
+
+  /* colours */
+  --background: rgb(14, 14, 14);
+  --text: hsl(0 0% 98%);
+  --text-invert: hsl(from var(--text) calc(h + 180) s calc(100 - l));
+  --accent: rgb(255, 25, 56);
+
+  /* general */
+  --radius: 0.6rem;
+  scrollbar-color: var(--accent) var(--border);
+  scrollbar-gutter: stable;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-inter);
+  font-size: var(--font-18);
+  color: var(--text);
+  background-color: var(--background);
+}
+
+h1 {
+  font-size: var(--font-32);
+}
+
+h2 {
+  font-size: var(--font-24);
+}
+
+a {
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--accent);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+::selection,
+::-moz-selection {
+  background-color: var(--accent);
+  color: var(--text-invert);
+}
