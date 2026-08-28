@@ -28,8 +28,8 @@
   --spacing-32: 3.2rem;
 
   /* colours */
-  --background: rgb(14, 14, 14);
-  --text: hsl(0 0% 98%);
+  --background: light-dark(rgb(241, 241, 241), rgb(14, 14, 14));
+  --text: light-dark(hsl(0 0% 0% / 0.8), hsl(0 0% 98%));
   --text-invert: hsl(from var(--text) calc(h + 180) s calc(100 - l));
   --accent: rgb(255, 25, 56);
 

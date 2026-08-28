@@ -54,7 +54,7 @@
   nav {
     width: fit-content;
     margin: 3rem auto;
-    background: hsl(0 0% 0% / 0.8);
+    background: light-dark(hsl(0 0% 98%), hsl(0 0% 0% / 0.8)); /* oposite of --text */
     padding: 8px;
 
     isolation: isolate;
@@ -126,6 +126,11 @@
       padding: 1rem;
       text-decoration: none;
       color: var(--text);
+    }
+    a:hover,
+    a:focus-visible {
+      color: light-dark(hsl(0 0% 98%), hsl(0 0% 0% / 0.8))
+        /* same as nav bg which is the oposite of --text */;
     }
   }
 </style>

@@ -1,3 +1,4 @@
 :root {
-  --section-bg: rgb(11, 11, 11);
+  --section-bg: light-dark(rgb(244, 244, 244), rgb(11, 11, 11));
+  color-scheme: light dark;
 }
