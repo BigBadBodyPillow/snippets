@@ -7,10 +7,10 @@
     <nav>
       <!-- svelte-ignore a11y_invalid_attribute-->
       <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Blog</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="#" draggable="false">Home</a></li>
+        <li><a href="#" draggable="false">About</a></li>
+        <li><a href="#" draggable="false">Blog</a></li>
+        <li><a href="#" draggable="false">Contact</a></li>
       </ul>
     </nav>
   </div>
@@ -22,6 +22,7 @@
       <a href="https://www.youtube.com/watch?v=8_NQ7ARXz8c">video</a> on using anchor positioning for
       nav elements.
     </p>
+    <p>It makes use of <a href="https://easingwizard.com/">Easing Wizard</a> timing functions</p>
     <br />
     <p>His <a href="https://codepen.io/kevinpowell/pen/vENZzBd">CodePen</a>.</p>
   </div>

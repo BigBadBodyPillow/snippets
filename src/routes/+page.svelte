@@ -1,14 +1,20 @@
 <script>
+  import Acordian from '../components/Acordian.svelte';
+  import Carousel from '../components/Carousel.svelte';
   import Nav from '../components/Nav/Nav.svelte';
-  import Preview from '../components/Preview.svelte';
+  // import Preview from '../components/Preview.svelte';
 </script>
 
 <h1>A collection of components / snippets that i would like to remember</h1>
 
 <div>
-  <Preview title="Title of this preview" description="Description for this preview">words</Preview>
+  <!-- <Preview title="Title of this preview" description="Description for this preview">words</Preview> -->
+
+  <Carousel />
 
   <Nav />
+
+  <Acordian />
 </div>
 
 <style>
