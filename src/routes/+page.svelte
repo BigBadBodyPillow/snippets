@@ -1,6 +1,6 @@
 <script>
   import Acordian from '../components/Acordian.svelte';
-  import Carousel from '../components/Carousel.svelte';
+  import Carousel from '../components/Carousel/Carousel.svelte';
   import Nav from '../components/Nav/Nav.svelte';
   // import Preview from '../components/Preview.svelte';
 </script>

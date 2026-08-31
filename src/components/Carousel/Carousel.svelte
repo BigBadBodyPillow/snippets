@@ -1,78 +1,35 @@
+<script lang="ts">
+  const cards = [
+    { title: 'Item 01', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 02', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 03', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 04', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 05', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 06', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 07', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 08', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 09', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 10', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 11', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 12', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 13', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 14', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 15', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 16', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 17', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Item 18', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' }
+  ];
+</script>
+
 <section>
   <div class="demo">
     <ul class="carousel">
-      <li class="card">
-        <span>Item 01</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 02</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 03</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 04</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 05</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 06</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 07</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 08</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 09</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 10</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 11</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 12</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 13</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 14</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 15</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 16</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 17</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
-      <li class="card">
-        <span>Item 18</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </li>
+      {#each cards as card, index (index)}
+        <li class="card">
+          <span>{card.title}</span>
+          <p>{card.content}</p>
+        </li>
+      {/each}
     </ul>
   </div>
 

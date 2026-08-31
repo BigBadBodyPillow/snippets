@@ -31,12 +31,13 @@
   --background: light-dark(rgb(241, 241, 241), rgb(14, 14, 14));
   --text: light-dark(hsl(0 0% 0% / 0.8), hsl(0 0% 98%));
   --text-invert: hsl(from var(--text) calc(h + 180) s calc(100 - l));
-  --accent: rgb(255, 25, 56);
+  --accent: #ff0033;
 
   /* general */
   --radius: 0.6rem;
   scrollbar-color: var(--accent) var(--background);
   scrollbar-gutter: stable;
+  scrollbar-width: thin;
 }
 
 html {
@@ -53,6 +54,9 @@ body {
   font-size: var(--font-18);
   color: var(--text);
   background-color: var(--background);
+
+  -webkit-font-smoothing: none !important;
+  text-rendering: geometricPrecision !important;
 }
 
 h1 {

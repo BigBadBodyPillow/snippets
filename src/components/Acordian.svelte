@@ -60,6 +60,7 @@
 
     --card-title: white;
     --cart-text: hsl(from var(--text) h s 73);
+    --border: rgb(82, 82, 82);
   }
 
   details {
