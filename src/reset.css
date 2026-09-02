@@ -54,9 +54,6 @@ body {
   font-size: var(--font-18);
   color: var(--text);
   background-color: var(--background);
-
-  -webkit-font-smoothing: none !important;
-  text-rendering: geometricPrecision !important;
 }
 
 h1 {
@@ -73,16 +70,17 @@ a {
   color: var(--accent);
 }
 
-a:hover {
-  text-decoration: underline;
-}
-
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 4px;
 }
 
-::selection,
+/* Have to have separate / duplicate decalrations because chrome wont like it  */
+::selection {
+  background-color: var(--accent);
+  color: var(--text-invert);
+}
+
 ::-moz-selection {
   background-color: var(--accent);
   color: var(--text-invert);

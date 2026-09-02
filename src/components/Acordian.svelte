@@ -8,7 +8,7 @@
         dignissimos, maiores laudantium, repudiandae, fugit porro.
       </p>
     </details>
-    <details open>
+    <details>
       <summary>How do I request a refund?</summary>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio pariatur temporibus ipsa
@@ -18,7 +18,7 @@
         consequatur ut totam, magni, odit porro id ratione est provident officiis.
       </p>
     </details>
-    <details open>
+    <details>
       <summary>Is there a free trial for the subscription?</summary>
       <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam sed laborum amet saepe?</p>
     </details>

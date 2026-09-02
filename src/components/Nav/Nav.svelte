@@ -128,8 +128,7 @@
       text-decoration: none;
       color: var(--text);
     }
-    a:hover,
-    a:focus-visible {
+    a:hover {
       color: light-dark(hsl(0 0% 98%), hsl(0 0% 0% / 0.8))
         /* same as nav bg which is the oposite of --text */;
     }

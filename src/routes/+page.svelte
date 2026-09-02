@@ -2,19 +2,17 @@
   import Acordian from '../components/Acordian.svelte';
   import Carousel from '../components/Carousel/Carousel.svelte';
   import Nav from '../components/Nav/Nav.svelte';
-  // import Preview from '../components/Preview.svelte';
+  import Texture from '../components/Texture/Texture.svelte';
 </script>
 
-<h1>A collection of components / snippets that i would like to remember</h1>
-
 <div>
-  <!-- <Preview title="Title of this preview" description="Description for this preview">words</Preview> -->
-
   <Carousel />
 
   <Nav />
 
   <Acordian />
+
+  <Texture />
 </div>
 
 <style>
@@ -25,10 +23,6 @@
       align-items: center;
       padding: var(--spacing-16);
     }
-  }
-
-  h1 {
-    margin-top: var(--spacing-32);
   }
 
   div {

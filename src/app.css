@@ -1,4 +1,20 @@
 :root {
-  --section-bg: light-dark(rgb(244, 244, 244), rgb(11, 11, 11));
   color-scheme: light dark;
+  --section-bg: light-dark(rgb(234, 234, 234), rgb(11, 11, 11));
+}
+
+h1,
+h2,
+h3,
+a,
+p {
+  line-height: 1.5em;
+}
+
+a {
+  text-underline-offset: 6px;
+}
+
+a:hover {
+  text-decoration: underline dashed;
 }
