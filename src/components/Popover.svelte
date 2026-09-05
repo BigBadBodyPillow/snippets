@@ -16,8 +16,8 @@
   </div>
 
   <div class="about">
-    <h2 class="title">Title</h2>
-    <p class="description">Description</p>
+    <h2 class="title">Popover</h2>
+    <p class="description">Popovers, kinda like the Path of Exile keywords</p>
   </div>
 </section>
 
