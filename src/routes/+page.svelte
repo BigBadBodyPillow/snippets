@@ -5,6 +5,7 @@
   import Popover from '../components/Popover.svelte';
   import RainbowLine from '../components/RainbowLine.svelte';
   import Texture from '../components/Texture/Texture.svelte';
+  import TiltableCard from '../components/TiltableCard/TiltableCard.svelte';
 
   let altPressed = $state(false);
 
@@ -50,16 +51,20 @@
       <p class="description">The rainbowline that i use a lot</p>
     </div>
   </section>
+
+  <TiltableCard />
 </div>
 
 <style>
-  :global {
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: var(--spacing-16);
-    }
+  :global(body) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-16);
+  }
+
+  :global(section:last-of-type) {
+    margin-bottom: 100px;
   }
 
   div {

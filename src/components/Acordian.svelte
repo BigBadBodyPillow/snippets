@@ -92,14 +92,21 @@
   details summary::after {
     color: var(--accent);
     content: '+';
+    display: grid;
+    place-items: center;
+
     font-size: 2rem;
     font-weight: 400;
     line-height: 1;
-    transition: rotate 200ms ease;
+
+    transform-origin: 50% 57%;
+    transition:
+      font-weight 200ms ease,
+      rotate 200ms ease;
   }
 
   details[open] summary::after {
-    font-size: 2.1rem;
+    font-weight: 500;
     rotate: 45deg;
   }
 
