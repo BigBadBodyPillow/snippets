@@ -10,13 +10,7 @@
   <div class="about">
     <h2 class="title">Tiltable Card</h2>
     <div class="description">
-      <p>A card that tilts on hover.</p>
-      <p>
-        I have a feeling that the knowlage from my
-        <a href="https://bigbadbodypillow.github.io/draggable/">draggable</a>
-        <a href="https://github.com/BigBadBodyPillow/draggable">project</a> will be useful for this component,
-        specifically turning the cursour position into an angle
-      </p>
+      <p>A card that tilts towards the cursor on hover.</p>
       <p>
         <a href="https://www.mshr.app/">mshr.app</a> was used for this showcases
         <a href="https://www.mshr.app/mesh/1683634849454">background gradient and noise</a>.

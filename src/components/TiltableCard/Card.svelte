@@ -1,70 +1,42 @@
-<div class="card">
+<script lang="ts">
+  const maxRotationAngle = 12;
+  let cursorPosition = $state({ x: 0, y: 0 });
+  let xRotationAngle = $derived((-cursorPosition.y / 100) * maxRotationAngle);
+  let yRotationAngle = $derived((-cursorPosition.x / 100) * maxRotationAngle);
+
+  function trackCursor(event: PointerEvent) {
+    if (!(event.currentTarget instanceof HTMLElement)) return;
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+    if (bounds.width === 0 || bounds.height === 0) return;
+
+    cursorPosition = {
+      x: Math.max(
+        -100,
+        Math.min(
+          100,
+          ((event.clientX - (bounds.left + bounds.width / 2)) / (bounds.width / 2)) * 100
+        )
+      ),
+      y: Math.max(
+        -100,
+        Math.min(
+          100,
+          ((bounds.top + bounds.height / 2 - event.clientY) / (bounds.height / 2)) * 100
+        )
+      )
+    };
+  }
+</script>
+
+<div
+  class="card"
+  role="presentation"
+  onpointermove={trackCursor}
+  style={`--cursor-x: ${cursorPosition.x}%; --cursor-y: ${cursorPosition.y}%; --rotation-angle-x: ${xRotationAngle}deg; --rotation-angle-y: ${yRotationAngle}deg`}
+>
   <div class="border">
     <div class="inside">Text</div>
-    <!-- notes for the future because i will likely forget
-
-      X and Y axes. 
-      The furthaer the cursor moves to the center of each axis,
-      the larger the angle will be.
-      The closer to an axis the less. 
-
-      -- cursor position  examples -- 
-      -100% 100%:
-      max left max top tilt
-
-       0% 100%:
-      no left or right rotation but max top tilt
-
-      100% 100%:
-      max right max top tilt
-
-      100% 0%:
-      full right but no vertical tilt
-      
-      100% -100%:
-      full right and full bottom tilt
-
-
-
-      say this is the card:
-        |  x    |  y
-      a | -100% |  100%
-      b |  0%   |  100%
-      c |  100% |  100%
-      + |  0%   |  0%
-      d |  100% |  0%
-      e |  100% | -100%
-      
-
-      a                b                  c
-                       |
-                       |
-                       |
-                       |
-                       |
-                       |
-                       |
-                       |
-                       |
-                       |
-      -----------------+----------------- d
-                       |
-                       |
-                       |
-                       |
-                       |
-                       |
-                       |
-                       |
-                       |
-                       |                  e
-
-
-
-
-      
-    
-    -->
   </div>
 </div>
 
@@ -75,7 +47,6 @@
     and not when .border is hovered is because
     transform changes the shape of the element,
     which can cause the cursor to no longer be on the element.
-
   */
 
   .card,
@@ -86,13 +57,18 @@
     max-height: 600px;
   }
 
-  .border {
+  .card {
     --border-width: 10px;
     --border-color: light-dark(rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.4));
+    --stripe-width: 10px;
     --stripe1-colour: light-dark(rgb(240, 240, 240), rgb(15, 15, 15));
     --stripe2-colour: light-dark(rgb(235, 235, 235), rgb(20, 20, 20));
-    --rotation-angle: 12deg;
+    --transition-duration: 700ms;
 
+    perspective: 500px;
+  }
+
+  .border {
     position: relative;
 
     /* the "border" */
@@ -102,8 +78,9 @@
     -webkit-backdrop-filter: blur(10px);
 
     will-change: transform;
+
     /* https://easingwizard.com/ */
-    transition: 1350ms
+    transition: transform var(--transition-duration)
       linear(
         0,
         0.033 1%,
@@ -124,7 +101,7 @@
   }
 
   .card:hover .border {
-    transform: rotateX(var(--rotation-angle)) rotateY(var(--rotation-angle));
+    transform: rotateX(var(--rotation-angle-x)) rotateY(var(--rotation-angle-y));
   }
 
   .inside {
@@ -134,9 +111,9 @@
     background: repeating-linear-gradient(
       135deg,
       var(--stripe1-colour),
-      var(--stripe1-colour) 10px,
-      var(--stripe2-colour) 10px,
-      var(--stripe2-colour) 20px
+      var(--stripe1-colour) var(--stripe-width),
+      var(--stripe2-colour) var(--stripe-width),
+      var(--stripe2-colour) calc(var(--stripe-width) * 2)
     );
   }
 </style>
