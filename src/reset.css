@@ -13,6 +13,10 @@
   --font-inter: 'Inter', sans-serif;
   --font-space-grotesk: 'Space Grotesk', sans-serif;
   --font-roboto-mono: 'Roboto Mono', monospace;
+  --font-10: 1rem;
+  --font-11: 1.1rem;
+  --font-12: 1.2rem;
+  --font-14: 1.4rem;
   --font-16: 1.6rem;
   --font-18: 1.8rem;
   --font-24: 2.4rem;
