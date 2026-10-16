@@ -59,10 +59,8 @@
       <div class="content">
         <h3>Lorem ipsum</h3>
         <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo dolores recusandae
-          suscipit labore sunt dolorem eveniet accusamus voluptatem doloribus illum illo fugit ipsam
-          quis quas, molestiae veritatis iste perspiciatis numquam magnam quod, ipsum, sapiente et
-          ipsa. Quo iusto quia, tempora ducimus ab maxime deleniti!
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quia, excepturi alias totam
+          sequi maiores numquam minus commodi.
         </p>
       </div>
     </div>
@@ -81,9 +79,8 @@
   .card,
   .border {
     width: 100%;
-    height: 100%;
     max-width: var(--card-width);
-    max-height: var(--card-height);
+    aspect-ratio: 2/3;
   }
 
   .card {
@@ -93,8 +90,7 @@
     --stripe1-colour: light-dark(rgb(240, 240, 240), rgb(15, 15, 15));
     --stripe2-colour: light-dark(rgb(235, 235, 235), rgb(20, 20, 20));
     --transition-duration: 700ms;
-    --card-width: 400px;
-    --card-height: 550px;
+    --card-width: 350px;
 
     perspective: 500px;
     cursor: grabbing;
@@ -103,12 +99,12 @@
   .border {
     position: relative;
 
-    /* the "border" */
     padding: var(--border-width);
     background-color: var(--border-color);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 
+    backface-visibility: hidden;
     will-change: transform;
 
     /* https://easingwizard.com/ */
@@ -179,6 +175,13 @@
     scale: 1.1;
   }
 
+  @media (prefers-color-scheme: light) {
+    .picture:before {
+      filter: blur(80px) saturate(10);
+      scale: 0.9;
+    }
+  }
+
   .image {
     width: 100%;
     height: 100%;
@@ -188,41 +191,42 @@
   }
 
   .content {
-    font-family: var(--font-space-grotesk);
     --content-border: light-dark(rgba(255, 255, 255, 0.3), rgba(70, 70, 70, 0.3));
-    height: 100%;
-    z-index: 10;
-    padding: var(--spacing-10);
 
+    position: relative;
+    height: 100%;
+    z-index: 100;
+
+    padding: var(--spacing-10);
     border: 2px solid var(--content-border);
     border-radius: var(--inside-radius) var(--inside-radius) 0 0;
-    /* background-color: var(--section-bg); */
 
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    font-family: var(--font-space-grotesk);
+    overflow: hidden;
+    text-overflow: ellipsis;
+
     cursor: auto;
+
+    :before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+
+      /* background-color: var(--content-border); */
+      /* filter: blur(13px); */
+
+      backdrop-filter: blur(4px);
+    }
 
     p {
       font-size: var(--font-16);
       font-family: var(--font-inter);
       line-height: 1.5;
-      display: -webkit-box;
-      line-clamp: 3;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-  }
-
-  @media (prefers-color-scheme: light) {
-    .picture:before {
-      filter: blur(80px) saturate(10);
-      scale: 0.9;
-    }
-
-    .content {
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
+      color: light-dark(
+        hsl(from var(--text) h s calc(l + 12)),
+        hsl(from var(--text) h s calc(l - 12))
+      );
     }
   }
 </style>

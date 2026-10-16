@@ -31,7 +31,7 @@
 
   .demo {
     width: 100%;
-    aspect-ratio: 5/4;
+    aspect-ratio: 6/4;
 
     display: grid;
     place-items: center;

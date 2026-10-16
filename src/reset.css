@@ -34,7 +34,7 @@
 
   /* colours */
   --background: light-dark(rgb(241, 241, 241), rgb(14, 14, 14));
-  --text: light-dark(hsl(0 0% 0% / 0.8), hsl(0 0% 98%));
+  --text: light-dark(hsl(0 0% 18%), hsl(0 0% 98%));
   --text-invert: hsl(from var(--text) calc(h + 180) s calc(100 - l));
   --accent: #ff0033;
   --border: hsl(from var(--background) h s 50 / 0.5);
