@@ -140,7 +140,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-20);
-    overflow: hidden;
+    padding: var(--spacing-16);
 
     background-color: var(--background);
     background: repeating-linear-gradient(
@@ -151,7 +151,7 @@
       var(--stripe2-colour) calc(var(--stripe-width) * 2)
     );
 
-    padding: var(--spacing-16);
+    overflow: hidden;
   }
 
   .picture {

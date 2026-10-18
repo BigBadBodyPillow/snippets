@@ -1,8 +1,8 @@
 export function smoothScroll() {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const wheelAcceleration = 0.01;
-  const maxVelocity = 15;
-  const momentumRetention = 0.92;
+  const wheelAcceleration = 0.012;
+  const maxVelocity = 33;
+  const momentumRetention = 0.9;
   let velocity = 0;
   let animationFrame = 0;
   let lastFrameTime = 0;
