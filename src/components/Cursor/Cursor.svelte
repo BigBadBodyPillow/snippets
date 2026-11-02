@@ -1,5 +1,14 @@
+<script lang="ts">
+  import Arrow from './myArrow.svg?raw';
+</script>
+
 <section>
-  <div class="demo"></div>
+  <div class="demo">
+    <div class="square"></div>
+
+    <!--  eslint-disable svelte/no-at-html-tags -->
+    {@html Arrow}
+  </div>
 
   <div class="about">
     <h2 class="title">Cursor</h2>
@@ -20,5 +29,13 @@
     width: 100%;
     aspect-ratio: 16/9;
     border: 2px dashed var(--border);
+
+    cursor: url('myArrow.svg'), auto;
+  }
+
+  .square {
+    width: 32px;
+    height: 32px;
+    background-color: var(--accent);
   }
 </style>

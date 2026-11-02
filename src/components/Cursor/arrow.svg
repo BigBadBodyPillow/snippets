@@ -1,0 +1,14 @@
+<svg width="32" height="32" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"   style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:10;">
+    <g transform="matrix(1,0,0,-1,0,32)">
+        <path d="
+        M12.736,19.041
+        L7.802,19.041
+        L9.828,14.918
+        L6.883,13.425
+        L4.623,18.059
+        L1.264,14.783
+        L1.264,30.575
+        L12.736,19.041
+        Z" style="fill:rgb(255,0,51);fill-rule:nonzero;stroke:rgb(0,0,1);stroke-width:1px;"/>
+    </g>
+</svg>

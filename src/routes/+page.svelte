@@ -1,7 +1,7 @@
 <script lang="ts">
   import Acordian from '../components/Acordian.svelte';
   import Carousel from '../components/Carousel/Carousel.svelte';
-  import Cursor from '../components/Cursor.svelte';
+  import Cursor from '../components/Cursor/Cursor.svelte';
   import Nav from '../components/Nav/Nav.svelte';
   import Popover from '../components/Popover.svelte';
   import RainbowLine from '../components/RainbowLine.svelte';
