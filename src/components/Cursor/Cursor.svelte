@@ -3,10 +3,14 @@
     x: number;
     y: number;
   }
-  const cursor = $state<Coordinates>({ x: 0, y: 0 });
+  type MovementDirection =
+    'left' | 'right' | 'up' | 'down' | 'up-left' | 'up-right' | 'down-left' | 'down-right';
+  const cursor: Coordinates = $state({ x: 0, y: 0 });
   const petOffsetX = 20;
   let pet: HTMLDivElement;
   let moveArea: HTMLDivElement;
+  let previousPosition: Coordinates | undefined;
+  let movementDirection: MovementDirection = $state('left');
 
   function normaliseMovement(position: Coordinates): Coordinates {
     const area = moveArea.getBoundingClientRect();
@@ -18,7 +22,7 @@
 
     return {
       x: Math.max(0, Math.min(xFromLeft, maxX - petOffsetX * 2)),
-      y: Math.max(0, Math.min(yFromTop + petOffsetX, maxY - petOffsetX))
+      y: Math.max(petOffsetX, Math.min(yFromTop, maxY - petOffsetX))
     };
   }
 
@@ -28,17 +32,51 @@
     cursor.x = position.x;
     cursor.y = position.y;
 
-    pet.style.left = `${cursor.x + petOffsetX}px`;
-    pet.style.top = `${cursor.y}px`;
+    pet.style.transform = `translate(${cursor.x + petOffsetX}px, ${cursor.y}px)`;
 
     if (pet.style.display === 'block') return;
-    pet.style.display = 'block';
+    pet.style.visibility = 'visible';
+
+    updateDirection(position);
+  }
+
+  function updateDirection(position: Coordinates) {
+    if (!previousPosition) {
+      previousPosition = position;
+      return;
+    }
+
+    const deltaX = position.x - previousPosition.x;
+    const deltaY = position.y - previousPosition.y;
+    previousPosition = position;
+
+    if (deltaX === 0 && deltaY === 0) return;
+
+    const horizontal = deltaX < 0 ? 'left' : 'right';
+    const vertical = deltaY < 0 ? 'up' : 'down';
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+
+    if (absY < absX * Math.tan(Math.PI / 8)) {
+      movementDirection = deltaX < 0 ? 'left' : 'right';
+    } else if (absX < absY * Math.tan(Math.PI / 8)) {
+      movementDirection = deltaY < 0 ? 'up' : 'down';
+    } else {
+      movementDirection =
+        vertical === 'up'
+          ? horizontal === 'left'
+            ? 'up-left'
+            : 'up-right'
+          : horizontal === 'left'
+            ? 'down-left'
+            : 'down-right';
+    }
   }
 </script>
 
 <section>
   <div class="demo" bind:this={moveArea} onpointermove={handleMove} role="presentation">
-    <div class="pet" bind:this={pet}></div>
+    <div class="pet" bind:this={pet}>{movementDirection}</div>
 
     <div class="display">
       <span>x : {cursor.x}</span>
@@ -77,7 +115,12 @@
     border-radius: 100%;
     background-color: var(--accent);
 
-    display: none;
+    visibility: hidden;
     position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.2s linear;
+
+    color: rgb(100, 89, 246);
   }
 </style>

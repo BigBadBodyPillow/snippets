@@ -41,6 +41,7 @@
 
   /* general */
   --radius: 0.6rem;
+  color-scheme: light dark;
   scrollbar-color: var(--accent) var(--background);
   scrollbar-gutter: stable;
   scrollbar-width: thin;
