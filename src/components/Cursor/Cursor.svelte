@@ -1,92 +1,99 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte';
+
   interface Coordinates {
     x: number;
     y: number;
   }
-  type MovementDirection =
-    'left' | 'right' | 'up' | 'down' | 'up-left' | 'up-right' | 'down-left' | 'down-right';
-  const cursor: Coordinates = $state({ x: 0, y: 0 });
-  const petOffsetX = 20;
-  let pet: HTMLDivElement;
+
+  const petOffset = 16;
+  const petSize = 16;
+
+  let petPosition = $state<Coordinates>({ x: 0, y: 0 });
   let moveArea: HTMLDivElement;
   let previousPosition: Coordinates | undefined;
-  let movementDirection: MovementDirection = $state('left');
+  let isMoving = $state(false);
+  let facingLeft = $state(true);
+  let idleTimer: ReturnType<typeof setTimeout>;
 
-  function normaliseMovement(position: Coordinates): Coordinates {
-    const area = moveArea.getBoundingClientRect();
+  function clamp(value: number, min: number, max: number) {
+    return Math.max(min, Math.min(value, max));
+  }
+  function calculatePadding(size: number) {
+    return Math.min(petOffset, Math.max(0, (size - petSize) / 2));
+  }
 
-    const xFromLeft = position.x - area.left;
-    const maxX = area.width - pet.offsetWidth;
-    const yFromTop = position.y - area.top;
-    const maxY = area.height - pet.offsetHeight;
-
-    return {
-      x: Math.max(0, Math.min(xFromLeft, maxX - petOffsetX * 2)),
-      y: Math.max(petOffsetX, Math.min(yFromTop, maxY - petOffsetX))
-    };
+  function setLimit(position: number, padding: number, size: number) {
+    return clamp(position, padding, size - padding - petSize);
   }
 
   function handleMove(event: PointerEvent) {
-    const position = normaliseMovement(event);
+    const area = moveArea.getBoundingClientRect();
 
-    cursor.x = position.x;
-    cursor.y = position.y;
+    const x = event.clientX - area.left - moveArea.clientLeft;
+    const y = event.clientY - area.top - moveArea.clientTop;
 
-    pet.style.transform = `translate(${cursor.x + petOffsetX}px, ${cursor.y}px)`;
+    const horizontalPadding = calculatePadding(moveArea.clientWidth);
+    const verticalPadding = calculatePadding(moveArea.clientHeight);
 
-    if (pet.style.display === 'block') return;
-    pet.style.visibility = 'visible';
+    // petPosition.x = setLimit(x + petOffset, horizontalPadding, moveArea.clientWidth);
+    // petPosition.y = setLimit(y , verticalPadding, moveArea.clientHeight);
+    petPosition.x = setLimit(x - petOffset / 2, horizontalPadding, moveArea.clientWidth);
+    petPosition.y = setLimit(y - petOffset / 2, verticalPadding, moveArea.clientHeight);
 
-    updateDirection(position);
-  }
+    isMoving = true;
 
-  function updateDirection(position: Coordinates) {
-    if (!previousPosition) {
-      previousPosition = position;
-      return;
+    if (previousPosition && Math.abs(x - previousPosition.x) > 2) {
+      facingLeft = x < previousPosition.x;
     }
 
-    const deltaX = position.x - previousPosition.x;
-    const deltaY = position.y - previousPosition.y;
-    previousPosition = position;
+    previousPosition = { x, y };
 
-    if (deltaX === 0 && deltaY === 0) return;
-
-    const horizontal = deltaX < 0 ? 'left' : 'right';
-    const vertical = deltaY < 0 ? 'up' : 'down';
-    const absX = Math.abs(deltaX);
-    const absY = Math.abs(deltaY);
-
-    if (absY < absX * Math.tan(Math.PI / 8)) {
-      movementDirection = deltaX < 0 ? 'left' : 'right';
-    } else if (absX < absY * Math.tan(Math.PI / 8)) {
-      movementDirection = deltaY < 0 ? 'up' : 'down';
-    } else {
-      movementDirection =
-        vertical === 'up'
-          ? horizontal === 'left'
-            ? 'up-left'
-            : 'up-right'
-          : horizontal === 'left'
-            ? 'down-left'
-            : 'down-right';
-    }
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      isMoving = false;
+    }, 200);
   }
+
+  function handleLeave() {
+    isMoving = false;
+    previousPosition = undefined;
+    clearTimeout(idleTimer);
+  }
+
+  onDestroy(() => clearTimeout(idleTimer));
 </script>
 
 <section>
-  <div class="demo" bind:this={moveArea} onpointermove={handleMove} role="presentation">
-    <div class="pet" bind:this={pet}>{movementDirection}</div>
+  <div
+    class="demo"
+    bind:this={moveArea}
+    onpointermove={handleMove}
+    onpointerleave={handleLeave}
+    role="presentation"
+  >
+    <div
+      class="pet"
+      class:is-moving={isMoving}
+      class:faces-left={facingLeft}
+      style:transform="translate({petPosition.x}px, {petPosition.y}px)"
+      aria-hidden="true"
+    ></div>
 
     <div class="display">
-      <span>x : {cursor.x}</span>
-      <span>y : {cursor.y}</span>
+      <span>y : {petPosition.x}</span>
+      <div class="separator">|</div>
+      <span>y : {petPosition.y}</span>
+      <div class="separator">|</div>
+      <span>direction : {facingLeft ? 'Left' : 'Right'}</span>
+      <div class="separator">|</div>
+      <span> {isMoving ? 'Moving' : 'Stationary'}</span>
     </div>
   </div>
 
   <div class="about">
-    <h2 class="title">Cursor</h2>
-    <p class="description">Follows the curour</p>
+    <h2 class="title">Cursor cat</h2>
+    <p class="description">Move your pointer around the box and the cat will follow.</p>
   </div>
 </section>
 
@@ -100,27 +107,39 @@
   }
 
   .demo {
+    --pet-size: 16px;
+
     width: 100%;
     aspect-ratio: 16/9;
     border: 2px dashed var(--border);
-
     cursor: url('myArrow.svg'), auto;
-
     position: relative;
   }
 
   .pet {
-    width: 16px;
-    height: 16px;
-    border-radius: 100%;
-    background-color: var(--accent);
-
-    visibility: hidden;
     position: absolute;
     top: 0;
     left: 0;
-    transition: transform 0.2s linear;
+    width: var(--pet-size);
+    height: var(--pet-size);
+    background-color: var(--accent);
+    border-radius: 100%;
+    pointer-events: none;
 
-    color: rgb(100, 89, 246);
+    transition: transform 1s ease-out;
+  }
+
+  /* .pet::before {
+    content: 'right';
+  }
+  .pet.faces-left::before {
+    content: 'left';
+  } */
+
+  .display {
+    font-family: var(--font-roboto-mono);
+    font-size: var(--font-12);
+    display: flex;
+    gap: 8px;
   }
 </style>
