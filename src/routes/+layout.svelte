@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import '../reset.css';
   import '../app.css';
+
   import favicon from '$lib/assets/favicon.svg';
   import { smoothScroll } from '$lib/smoothScroll';
 

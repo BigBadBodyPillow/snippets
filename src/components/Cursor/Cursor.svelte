@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
-
   interface Coordinates {
     x: number;
     y: number;
@@ -8,13 +6,14 @@
 
   const petOffset = 16;
   const petSize = 16;
+  const petSpeed = 300;
 
   let petPosition = $state<Coordinates>({ x: 0, y: 0 });
   let moveArea: HTMLDivElement;
+  let petElement: HTMLDivElement;
+  let moveDuration = $state(0);
   let previousPosition: Coordinates | undefined;
-  let isMoving = $state(false);
   let facingLeft = $state(true);
-  let idleTimer: ReturnType<typeof setTimeout>;
 
   function clamp(value: number, min: number, max: number) {
     return Math.max(min, Math.min(value, max));
@@ -36,32 +35,28 @@
     const horizontalPadding = calculatePadding(moveArea.clientWidth);
     const verticalPadding = calculatePadding(moveArea.clientHeight);
 
-    // petPosition.x = setLimit(x + petOffset, horizontalPadding, moveArea.clientWidth);
-    // petPosition.y = setLimit(y , verticalPadding, moveArea.clientHeight);
-    petPosition.x = setLimit(x - petOffset / 2, horizontalPadding, moveArea.clientWidth);
-    petPosition.y = setLimit(y - petOffset / 2, verticalPadding, moveArea.clientHeight);
+    const nextX = setLimit(x - petOffset / 2, horizontalPadding, moveArea.clientWidth);
+    const nextY = setLimit(y - petOffset / 2, verticalPadding, moveArea.clientHeight);
+    const petBounds = petElement.getBoundingClientRect();
+    const currentX = petBounds.left - area.left - moveArea.clientLeft;
+    const currentY = petBounds.top - area.top - moveArea.clientTop;
 
-    isMoving = true;
+    moveDuration = (Math.hypot(nextX - currentX, nextY - currentY) / petSpeed) * 1000;
+    petPosition.x = nextX;
+    petPosition.y = nextY;
+
+    // isMoving = true;
 
     if (previousPosition && Math.abs(x - previousPosition.x) > 2) {
       facingLeft = x < previousPosition.x;
     }
 
     previousPosition = { x, y };
-
-    clearTimeout(idleTimer);
-    idleTimer = setTimeout(() => {
-      isMoving = false;
-    }, 200);
   }
 
   function handleLeave() {
-    isMoving = false;
     previousPosition = undefined;
-    clearTimeout(idleTimer);
   }
-
-  onDestroy(() => clearTimeout(idleTimer));
 </script>
 
 <section>
@@ -74,9 +69,9 @@
   >
     <div
       class="pet"
-      class:is-moving={isMoving}
       class:faces-left={facingLeft}
-      style:transform="translate({petPosition.x}px, {petPosition.y}px)"
+      bind:this={petElement}
+      style="--move-duration: {moveDuration}ms; transform: translate({petPosition.x}px, {petPosition.y}px)"
       aria-hidden="true"
     ></div>
 
@@ -86,8 +81,6 @@
       <span>y : {petPosition.y}</span>
       <div class="separator">|</div>
       <span>direction : {facingLeft ? 'Left' : 'Right'}</span>
-      <div class="separator">|</div>
-      <span> {isMoving ? 'Moving' : 'Stationary'}</span>
     </div>
   </div>
 
@@ -126,15 +119,8 @@
     border-radius: 100%;
     pointer-events: none;
 
-    transition: transform 1s ease-out;
+    transition: transform var(--move-duration) linear;
   }
-
-  /* .pet::before {
-    content: 'right';
-  }
-  .pet.faces-left::before {
-    content: 'left';
-  } */
 
   .display {
     font-family: var(--font-roboto-mono);
