@@ -1,4 +1,5 @@
 <script lang="ts">
+  type Direction = 'left' | 'right' | 'up' | 'down';
   interface Coordinates {
     x: number;
     y: number;
@@ -12,8 +13,7 @@
   let moveArea: HTMLDivElement;
   let petElement: HTMLDivElement;
   let moveDuration = $state(0);
-  let previousPosition: Coordinates | undefined;
-  let facingLeft = $state(true);
+  let movementDirections = $state<Direction[]>([]);
 
   function clamp(value: number, min: number, max: number) {
     return Math.max(min, Math.min(value, max));
@@ -45,31 +45,27 @@
     petPosition.x = nextX;
     petPosition.y = nextY;
 
-    // isMoving = true;
+    const deltaX = nextX - currentX;
+    const deltaY = nextY - currentY;
 
-    if (previousPosition && Math.abs(x - previousPosition.x) > 2) {
-      facingLeft = x < previousPosition.x;
-    }
-
-    previousPosition = { x, y };
+    handleDirection({ x: deltaX, y: deltaY });
   }
 
-  function handleLeave() {
-    previousPosition = undefined;
+  function handleDirection(delta: Coordinates) {
+    movementDirections = [];
+
+    if (delta.y < 0) movementDirections.push('up');
+    else if (delta.y > 0) movementDirections.push('down');
+
+    if (delta.x > 0) movementDirections.push('right');
+    else if (delta.x < 0) movementDirections.push('left');
   }
 </script>
 
 <section>
-  <div
-    class="demo"
-    bind:this={moveArea}
-    onpointermove={handleMove}
-    onpointerleave={handleLeave}
-    role="presentation"
-  >
+  <div class="demo" bind:this={moveArea} onpointermove={handleMove} role="presentation">
     <div
       class="pet"
-      class:faces-left={facingLeft}
       bind:this={petElement}
       style="--move-duration: {moveDuration}ms; transform: translate({petPosition.x}px, {petPosition.y}px)"
       aria-hidden="true"
@@ -79,8 +75,8 @@
       <span>y : {petPosition.x}</span>
       <div class="separator">|</div>
       <span>y : {petPosition.y}</span>
-      <div class="separator">|</div>
-      <span>direction : {facingLeft ? 'Left' : 'Right'}</span>
+      <div class="separator">{movementDirections.length ? '|' : undefined}</div>
+      <span>{movementDirections.length ? movementDirections.join(', ') : undefined}</span>
     </div>
   </div>
 
