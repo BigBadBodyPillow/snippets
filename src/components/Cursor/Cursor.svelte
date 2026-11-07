@@ -14,6 +14,7 @@
   let petElement: HTMLDivElement;
   let moveDuration = $state(0);
   let movementDirections = $state<Direction[]>([]);
+  let directionSymbol = $state('•');
 
   function clamp(value: number, min: number, max: number) {
     return Math.max(min, Math.min(value, max));
@@ -49,6 +50,7 @@
     const deltaY = nextY - currentY;
 
     handleDirection({ x: deltaX, y: deltaY });
+    changeSymbol();
   }
 
   function handleDirection(delta: Coordinates) {
@@ -60,6 +62,35 @@
     if (delta.x > 0) movementDirections.push('right');
     else if (delta.x < 0) movementDirections.push('left');
   }
+
+  function changeSymbol() {
+    switch (movementDirections.join(',')) {
+      case 'up':
+        directionSymbol = '↑';
+        break;
+      case 'up,right':
+        directionSymbol = '↗';
+        break;
+      case 'right':
+        directionSymbol = '→';
+        break;
+      case 'down,right':
+        directionSymbol = '↘';
+        break;
+      case 'down':
+        directionSymbol = '↓';
+        break;
+      case 'down,left':
+        directionSymbol = '↙';
+        break;
+      case 'left':
+        directionSymbol = '←';
+        break;
+      case 'up,left':
+        directionSymbol = '↖';
+        break;
+    }
+  }
 </script>
 
 <section>
@@ -67,12 +98,12 @@
     <div
       class="pet"
       bind:this={petElement}
-      style="--move-duration: {moveDuration}ms; transform: translate({petPosition.x}px, {petPosition.y}px)"
+      style="--direction:'{directionSymbol}'; --move-duration: {moveDuration}ms; transform: translate({petPosition.x}px, {petPosition.y}px)"
       aria-hidden="true"
     ></div>
 
     <div class="display">
-      <span>y : {petPosition.x}</span>
+      <span>x : {petPosition.x}</span>
       <div class="separator">|</div>
       <span>y : {petPosition.y}</span>
       <div class="separator">{movementDirections.length ? '|' : undefined}</div>
@@ -116,6 +147,17 @@
     pointer-events: none;
 
     transition: transform var(--move-duration) linear;
+  }
+
+  .pet::before {
+    content: var(--direction);
+    /* font-size: var(--font-12); */
+    line-height: 0;
+    color: rgb(255, 255, 255);
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
   }
 
   .display {
