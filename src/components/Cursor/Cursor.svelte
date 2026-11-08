@@ -8,6 +8,7 @@
   const petOffset = 16;
   const petSize = 16;
   const petSpeed = 300;
+  const degreeTolerance = 8;
 
   let petPosition = $state<Coordinates>({ x: 0, y: 0 });
   let moveArea: HTMLDivElement;
@@ -53,14 +54,28 @@
     changeSymbol();
   }
 
+  function calcTolerance(degrees: number) {
+    return Math.tan((degrees * Math.PI) / 180);
+  }
+
   function handleDirection(delta: Coordinates) {
+    const directionTolerance = calcTolerance(degreeTolerance);
     movementDirections = [];
 
-    if (delta.y < 0) movementDirections.push('up');
-    else if (delta.y > 0) movementDirections.push('down');
+    const horizontalMovement = Math.abs(delta.x);
+    const verticalMovement = Math.abs(delta.y);
+    const isHorizontal = verticalMovement <= horizontalMovement * directionTolerance;
+    const isVertical = horizontalMovement <= verticalMovement * directionTolerance;
 
-    if (delta.x > 0) movementDirections.push('right');
-    else if (delta.x < 0) movementDirections.push('left');
+    if (!isHorizontal) {
+      if (delta.y < 0) movementDirections.push('up');
+      else if (delta.y > 0) movementDirections.push('down');
+    }
+
+    if (!isVertical) {
+      if (delta.x > 0) movementDirections.push('right');
+      else if (delta.x < 0) movementDirections.push('left');
+    }
   }
 
   function changeSymbol() {
@@ -151,7 +166,7 @@
 
   .pet::before {
     content: var(--direction);
-    /* font-size: var(--font-12); */
+    font-size: var(--font-12);
     line-height: 0;
     color: rgb(255, 255, 255);
     position: absolute;
