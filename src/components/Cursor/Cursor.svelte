@@ -121,13 +121,15 @@
       <span>x : {petPosition.x}</span>
       <div class="separator">|</div>
       <span>y : {petPosition.y}</span>
+      <div class="separator">|</div>
+      <span>tollerance : {degreeTolerance}deg</span>
       <div class="separator">{movementDirections.length ? '|' : undefined}</div>
       <span>{movementDirections.length ? movementDirections.join(', ') : undefined}</span>
     </div>
   </div>
 
   <div class="about">
-    <h2 class="title">Cursor cat</h2>
+    <h2 class="title">Cursor pet</h2>
     <p class="description">Move your pointer around the box and the cat will follow.</p>
   </div>
 </section>
