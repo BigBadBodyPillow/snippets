@@ -5,17 +5,20 @@
     y: number;
   }
 
-  const petOffset = 16;
-  const petSize = 16;
+  const petOffset = 10;
+  const petSize = 96;
   const petSpeed = 300;
-  const degreeTolerance = 8;
+  const directionEnterTolerance = 12;
+  const directionExitTolerance = 6;
+  const directionDeadZone = 8;
 
   let petPosition = $state<Coordinates>({ x: 0, y: 0 });
   let moveArea: HTMLDivElement;
   let petElement: HTMLDivElement;
   let moveDuration = $state(0);
   let movementDirections = $state<Direction[]>([]);
-  let directionSymbol = $state('•');
+  // let directionSymbol = $state('•');
+  let petRotation = $state('0');
 
   function clamp(value: number, min: number, max: number) {
     return Math.max(min, Math.min(value, max));
@@ -26,6 +29,16 @@
 
   function setLimit(position: number, padding: number, size: number) {
     return clamp(position, padding, size - padding - petSize);
+  }
+
+  function getCurrentTranslation(): Coordinates {
+    const translation = getComputedStyle(petElement).translate;
+    if (translation === 'none') return petPosition;
+
+    // convert string "12px 8px" to an their own values in numbers
+    const [x, y] = translation.split(' ').map(parseFloat);
+
+    return { x: x, y: y };
   }
 
   function handleMove(event: PointerEvent) {
@@ -39,16 +52,14 @@
 
     const nextX = setLimit(x - petOffset / 2, horizontalPadding, moveArea.clientWidth);
     const nextY = setLimit(y - petOffset / 2, verticalPadding, moveArea.clientHeight);
-    const petBounds = petElement.getBoundingClientRect();
-    const currentX = petBounds.left - area.left - moveArea.clientLeft;
-    const currentY = petBounds.top - area.top - moveArea.clientTop;
+    const currentPosition = getCurrentTranslation();
 
-    moveDuration = (Math.hypot(nextX - currentX, nextY - currentY) / petSpeed) * 1000;
+    const deltaX = nextX - currentPosition.x;
+    const deltaY = nextY - currentPosition.y;
+
+    moveDuration = (Math.hypot(deltaX, deltaY) / petSpeed) * 1000;
     petPosition.x = nextX;
     petPosition.y = nextY;
-
-    const deltaX = nextX - currentX;
-    const deltaY = nextY - currentY;
 
     handleDirection({ x: deltaX, y: deltaY });
     changeSymbol();
@@ -59,50 +70,72 @@
   }
 
   function handleDirection(delta: Coordinates) {
-    const directionTolerance = calcTolerance(degreeTolerance);
-    movementDirections = [];
-
     const horizontalMovement = Math.abs(delta.x);
     const verticalMovement = Math.abs(delta.y);
-    const isHorizontal = verticalMovement <= horizontalMovement * directionTolerance;
-    const isVertical = horizontalMovement <= verticalMovement * directionTolerance;
+    if (Math.hypot(horizontalMovement, verticalMovement) < directionDeadZone) return;
+
+    const hadVerticalDirection = movementDirections.some(
+      (direction) => direction === 'up' || direction === 'down'
+    );
+    const hadHorizontalDirection = movementDirections.some(
+      (direction) => direction === 'left' || direction === 'right'
+    );
+    const horizontalTolerance = calcTolerance(
+      hadVerticalDirection ? directionExitTolerance : directionEnterTolerance
+    );
+    const verticalTolerance = calcTolerance(
+      hadHorizontalDirection ? directionExitTolerance : directionEnterTolerance
+    );
+    const isHorizontal = verticalMovement <= horizontalMovement * horizontalTolerance;
+    const isVertical = horizontalMovement <= verticalMovement * verticalTolerance;
+    const nextDirections: Direction[] = [];
 
     if (!isHorizontal) {
-      if (delta.y < 0) movementDirections.push('up');
-      else if (delta.y > 0) movementDirections.push('down');
+      if (delta.y < 0) nextDirections.push('up');
+      else if (delta.y > 0) nextDirections.push('down');
     }
 
     if (!isVertical) {
-      if (delta.x > 0) movementDirections.push('right');
-      else if (delta.x < 0) movementDirections.push('left');
+      if (delta.x > 0) nextDirections.push('right');
+      else if (delta.x < 0) nextDirections.push('left');
     }
+
+    movementDirections = nextDirections;
   }
 
   function changeSymbol() {
     switch (movementDirections.join(',')) {
       case 'up':
-        directionSymbol = '↑';
+        // directionSymbol = '↑';
+        petRotation = '90';
         break;
       case 'up,right':
-        directionSymbol = '↗';
+        // directionSymbol = '↗';
+        petRotation = '135';
         break;
       case 'right':
-        directionSymbol = '→';
+        // directionSymbol = '→';
+        petRotation = '180';
         break;
       case 'down,right':
-        directionSymbol = '↘';
+        // directionSymbol = '↘';
+        petRotation = '-135';
         break;
       case 'down':
-        directionSymbol = '↓';
+        // directionSymbol = '↓';
+        petRotation = '-90';
         break;
       case 'down,left':
-        directionSymbol = '↙';
+        // directionSymbol = '↙';
+        petRotation = '-45';
         break;
       case 'left':
-        directionSymbol = '←';
+        // directionSymbol = '←';
+        petRotation = '0';
         break;
       case 'up,left':
-        directionSymbol = '↖';
+        // directionSymbol = '↖';
+        petRotation = '45';
         break;
     }
   }
@@ -113,7 +146,9 @@
     <div
       class="pet"
       bind:this={petElement}
-      style="--direction:'{directionSymbol}'; --move-duration: {moveDuration}ms; transform: translate({petPosition.x}px, {petPosition.y}px)"
+      // style=" --move-duration: {moveDuration}ms; translate: {petPosition.x}px {petPosition.y}px; rotate: {petRotation}deg"
+      style="--move-duration: {moveDuration}ms; translate: {petPosition.x}px {petPosition.y}px; rotate: {petRotation}deg"
+      // style="--direction:'{directionSymbol}'; --move-duration: {moveDuration}ms; translate: {petPosition.x}px {petPosition.y}px"
       aria-hidden="true"
     ></div>
 
@@ -122,7 +157,7 @@
       <div class="separator">|</div>
       <span>y : {petPosition.y}</span>
       <div class="separator">|</div>
-      <span>tollerance : {degreeTolerance}deg</span>
+      <span>tolerance : {directionEnterTolerance}deg</span>
       <div class="separator">{movementDirections.length ? '|' : undefined}</div>
       <span>{movementDirections.length ? movementDirections.join(', ') : undefined}</span>
     </div>
@@ -144,7 +179,8 @@
   }
 
   .demo {
-    --pet-size: 16px;
+    /* --pet-size: 52px; */
+    --pet-size: 96px;
 
     width: 100%;
     aspect-ratio: 16/9;
@@ -154,21 +190,31 @@
   }
 
   .pet {
+    --rotation: 0deg;
     position: absolute;
-    top: 0;
-    left: 0;
+    /* top: 50%;
+    left: 50%; */
+    /* transform: translate(-50%, -50%); */
     width: var(--pet-size);
     height: var(--pet-size);
-    background-color: var(--accent);
-    border-radius: 100%;
-    pointer-events: none;
+    /* background-color: var(--accent); */
+    /* border-radius: 100%; */
 
-    transition: transform var(--move-duration) linear;
+    background: url('$lib/assets/cat.svg');
+    /* background: url('$lib/assets/output.gif');
+    background-size: cover;
+    background-position: center; */
+    background-repeat: no-repeat;
+    pointer-events: none;
+    will-change: transform;
+    rotate: var(--rotation);
+
+    transition: translate var(--move-duration) linear;
   }
 
   .pet::before {
     content: var(--direction);
-    font-size: var(--font-12);
+    /* font-size: var(--font-12); */
     line-height: 0;
     color: rgb(255, 255, 255);
     position: absolute;
