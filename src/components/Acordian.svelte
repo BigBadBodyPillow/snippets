@@ -43,7 +43,6 @@
   section {
     height: fit-content;
     width: 100%;
-    height: fit-content;
     background-color: var(--section-bg);
     padding: var(--spacing-16);
     margin-bottom: var(--spacing-32);

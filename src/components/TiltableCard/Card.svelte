@@ -161,8 +161,8 @@
     position: relative;
     isolation: isolate;
     border-radius: 0 0 var(--inside-radius) var(--inside-radius);
-    /* background: url('$lib/assets/n-i-x-e-u-blood-or-blush-b-tt.jpg') center / cover; */
-    background: url('$lib/assets/Bloody Valentine.jpg') center / cover;
+    /* background: url('./n-i-x-e-u-blood-or-blush-b-tt.jpg') center / cover; */
+    background: url('./Bloody\ Valentine.jpg') center / cover;
   }
 
   .picture:before {
@@ -205,7 +205,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 
-    cursor: auto;
+    cursor: var(--cursor);
 
     :before {
       content: '';

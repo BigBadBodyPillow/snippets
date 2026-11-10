@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte';
+
   type Direction = 'left' | 'right' | 'up' | 'down';
   interface Coordinates {
     x: number;
@@ -6,19 +8,23 @@
   }
 
   const petOffset = 10;
-  const petSize = 96;
+  const petSize = 48;
+  const cursorBufferRadius = 10;
+  const cursorResumeRadius = 15;
+  const petRadius = Math.hypot(petSize / 2, petSize / 2);
   const petSpeed = 300;
   const directionEnterTolerance = 12;
-  const directionExitTolerance = 6;
-  const directionDeadZone = 8;
+  const directionExitTolerance = directionEnterTolerance / 2;
+  const directionDeadZone = 0.1;
 
   let petPosition = $state<Coordinates>({ x: 0, y: 0 });
   let moveArea: HTMLDivElement;
-  let petElement: HTMLDivElement;
-  let moveDuration = $state(0);
   let movementDirections = $state<Direction[]>([]);
-  // let directionSymbol = $state('•');
-  let petRotation = $state('0');
+  let petRotation = $state(0);
+  let targetPosition: Coordinates = { x: 0, y: 0 };
+  let animationFrame: number | null = null;
+  let lastFrameTime: number | null = null;
+  let isFollowing = false;
 
   function clamp(value: number, min: number, max: number) {
     return Math.max(min, Math.min(value, max));
@@ -31,45 +37,119 @@
     return clamp(position, padding, size - padding - petSize);
   }
 
-  function getCurrentTranslation(): Coordinates {
-    const translation = getComputedStyle(petElement).translate;
-    if (translation === 'none') return petPosition;
+  function animatePet(timestamp: number) {
+    animationFrame = null;
+    // prevent jumping / frame skipping after a blocked or backgrounded frame.
+    const elapsed = lastFrameTime === null ? 0 : Math.min(timestamp - lastFrameTime, 50);
+    lastFrameTime = timestamp;
 
-    // convert string "12px 8px" to an their own values in numbers
-    const [x, y] = translation.split(' ').map(parseFloat);
+    const deltaX = targetPosition.x - petPosition.x;
+    const deltaY = targetPosition.y - petPosition.y;
+    const distance = Math.hypot(deltaX, deltaY);
+    const distanceToMove = (petSpeed * elapsed) / 1000;
 
-    return { x: x, y: y };
+    if (distance <= distanceToMove || distance < 0.1) {
+      updatePetDirection({ x: deltaX, y: deltaY });
+      petPosition = { ...targetPosition };
+      lastFrameTime = null;
+      isFollowing = false;
+      return;
+    }
+
+    const progress = distanceToMove / distance;
+    const movement = { x: deltaX * progress, y: deltaY * progress };
+    updatePetDirection(movement);
+    petPosition = {
+      x: petPosition.x + movement.x,
+      y: petPosition.y + movement.y
+    };
+    animationFrame = requestAnimationFrame(animatePet);
   }
 
-  function handleMove(event: PointerEvent) {
+  function startAnimation() {
+    if (animationFrame !== null) return;
+    lastFrameTime = null;
+    animationFrame = requestAnimationFrame(animatePet);
+  }
+
+  function stopFollowing() {
+    isFollowing = false;
+    targetPosition = { ...petPosition };
+    if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+    animationFrame = null;
+    lastFrameTime = null;
+  }
+
+  function getPointerPosition(event: PointerEvent): Coordinates {
     const area = moveArea.getBoundingClientRect();
+    return {
+      x: event.clientX - area.left - moveArea.clientLeft,
+      y: event.clientY - area.top - moveArea.clientTop
+    };
+  }
 
-    const x = event.clientX - area.left - moveArea.clientLeft;
-    const y = event.clientY - area.top - moveArea.clientTop;
+  function getDistanceFromPet(pointer: Coordinates) {
+    const centerX = petPosition.x + petSize / 2;
+    const centerY = petPosition.y + petSize / 2;
+    return Math.max(0, Math.hypot(pointer.x - centerX, pointer.y - centerY) - petRadius);
+  }
 
+  function shouldFollowPointer(pointer: Coordinates): boolean {
+    const distanceFromPet = getDistanceFromPet(pointer);
+    if (!isFollowing) {
+      if (distanceFromPet <= cursorResumeRadius) return false;
+      isFollowing = true;
+    } else if (distanceFromPet <= cursorBufferRadius) {
+      stopFollowing();
+      return false;
+    }
+
+    return true;
+  }
+
+  function getTargetPosition(pointer: Coordinates): Coordinates {
+    const centerX = petPosition.x + petSize / 2;
+    const centerY = petPosition.y + petSize / 2;
+    const offsetX = pointer.x - centerX;
+    const offsetY = pointer.y - centerY;
+    const centerDistance = Math.hypot(offsetX, offsetY);
+    const directionX = centerDistance > 0 ? offsetX / centerDistance : 1;
+    const directionY = centerDistance > 0 ? offsetY / centerDistance : 0;
+    const minimumDistance = petRadius + cursorBufferRadius;
     const horizontalPadding = calculatePadding(moveArea.clientWidth);
     const verticalPadding = calculatePadding(moveArea.clientHeight);
 
-    const nextX = setLimit(x - petOffset / 2, horizontalPadding, moveArea.clientWidth);
-    const nextY = setLimit(y - petOffset / 2, verticalPadding, moveArea.clientHeight);
-    const currentPosition = getCurrentTranslation();
-
-    const deltaX = nextX - currentPosition.x;
-    const deltaY = nextY - currentPosition.y;
-
-    moveDuration = (Math.hypot(deltaX, deltaY) / petSpeed) * 1000;
-    petPosition.x = nextX;
-    petPosition.y = nextY;
-
-    handleDirection({ x: deltaX, y: deltaY });
-    changeSymbol();
+    return {
+      x: setLimit(
+        pointer.x - directionX * minimumDistance - petSize / 2,
+        horizontalPadding,
+        moveArea.clientWidth
+      ),
+      y: setLimit(
+        pointer.y - directionY * minimumDistance - petSize / 2,
+        verticalPadding,
+        moveArea.clientHeight
+      )
+    };
   }
+
+  function handleMove(event: PointerEvent) {
+    const pointer = getPointerPosition(event);
+    if (!shouldFollowPointer(pointer)) return;
+
+    targetPosition = getTargetPosition(pointer);
+    startAnimation();
+  }
+
+  onDestroy(() => {
+    if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+  });
 
   function calcTolerance(degrees: number) {
     return Math.tan((degrees * Math.PI) / 180);
   }
 
-  function handleDirection(delta: Coordinates) {
+  function updatePetDirection(delta: Coordinates) {
     const horizontalMovement = Math.abs(delta.x);
     const verticalMovement = Math.abs(delta.y);
     if (Math.hypot(horizontalMovement, verticalMovement) < directionDeadZone) return;
@@ -80,6 +160,7 @@
     const hadHorizontalDirection = movementDirections.some(
       (direction) => direction === 'left' || direction === 'right'
     );
+    // taper angle to avoid flickering with digfaognals
     const horizontalTolerance = calcTolerance(
       hadVerticalDirection ? directionExitTolerance : directionEnterTolerance
     );
@@ -101,66 +182,52 @@
     }
 
     movementDirections = nextDirections;
+    updatePetAppearance();
   }
 
-  function changeSymbol() {
+  function updatePetAppearance() {
     switch (movementDirections.join(',')) {
       case 'up':
-        // directionSymbol = '↑';
-        petRotation = '90';
+        petRotation = 90;
         break;
       case 'up,right':
-        // directionSymbol = '↗';
-        petRotation = '135';
+        petRotation = 135;
         break;
       case 'right':
-        // directionSymbol = '→';
-        petRotation = '180';
+        petRotation = 180;
         break;
       case 'down,right':
-        // directionSymbol = '↘';
-        petRotation = '-135';
+        petRotation = -135;
         break;
       case 'down':
-        // directionSymbol = '↓';
-        petRotation = '-90';
+        petRotation = -90;
         break;
       case 'down,left':
-        // directionSymbol = '↙';
-        petRotation = '-45';
+        petRotation = -45;
         break;
       case 'left':
-        // directionSymbol = '←';
-        petRotation = '0';
+        petRotation = 0;
         break;
       case 'up,left':
-        // directionSymbol = '↖';
-        petRotation = '45';
+        petRotation = 45;
         break;
     }
   }
 </script>
 
 <section>
-  <div class="demo" bind:this={moveArea} onpointermove={handleMove} role="presentation">
+  <div
+    class="demo"
+    style="--pet-size: {petSize}px"
+    bind:this={moveArea}
+    onpointermove={handleMove}
+    role="presentation"
+  >
     <div
       class="pet"
-      bind:this={petElement}
-      // style=" --move-duration: {moveDuration}ms; translate: {petPosition.x}px {petPosition.y}px; rotate: {petRotation}deg"
-      style="--move-duration: {moveDuration}ms; translate: {petPosition.x}px {petPosition.y}px; rotate: {petRotation}deg"
-      // style="--direction:'{directionSymbol}'; --move-duration: {moveDuration}ms; translate: {petPosition.x}px {petPosition.y}px"
+      style="transform: translate3d({petPosition.x}px, {petPosition.y}px, 0) rotate({petRotation}deg)"
       aria-hidden="true"
     ></div>
-
-    <div class="display">
-      <span>x : {petPosition.x}</span>
-      <div class="separator">|</div>
-      <span>y : {petPosition.y}</span>
-      <div class="separator">|</div>
-      <span>tolerance : {directionEnterTolerance}deg</span>
-      <div class="separator">{movementDirections.length ? '|' : undefined}</div>
-      <span>{movementDirections.length ? movementDirections.join(', ') : undefined}</span>
-    </div>
   </div>
 
   <div class="about">
@@ -175,58 +242,23 @@
     width: 100%;
     background-color: var(--section-bg);
     padding: var(--spacing-16);
-    margin-bottom: var(--spacing-32);
   }
 
   .demo {
-    /* --pet-size: 52px; */
-    --pet-size: 96px;
-
     width: 100%;
     aspect-ratio: 16/9;
     border: 2px dashed var(--border);
-    cursor: url('myArrow.svg'), auto;
     position: relative;
   }
 
   .pet {
-    --rotation: 0deg;
     position: absolute;
-    /* top: 50%;
-    left: 50%; */
-    /* transform: translate(-50%, -50%); */
     width: var(--pet-size);
     height: var(--pet-size);
-    /* background-color: var(--accent); */
-    /* border-radius: 100%; */
 
-    background: url('$lib/assets/cat.svg');
-    /* background: url('$lib/assets/output.gif');
-    background-size: cover;
-    background-position: center; */
+    background: url('./cat.svg');
     background-repeat: no-repeat;
     pointer-events: none;
     will-change: transform;
-    rotate: var(--rotation);
-
-    transition: translate var(--move-duration) linear;
-  }
-
-  .pet::before {
-    content: var(--direction);
-    /* font-size: var(--font-12); */
-    line-height: 0;
-    color: rgb(255, 255, 255);
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-  }
-
-  .display {
-    font-family: var(--font-roboto-mono);
-    font-size: var(--font-12);
-    display: flex;
-    gap: 8px;
   }
 </style>

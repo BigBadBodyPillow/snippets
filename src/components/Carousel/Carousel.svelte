@@ -134,7 +134,7 @@
 
   .carousel::scroll-button(*):disabled {
     opacity: 0.5;
-    cursor: auto;
+    cursor: var(--cursor);
   }
 
   .carousel::scroll-marker-group {

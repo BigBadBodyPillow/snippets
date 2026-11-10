@@ -31,7 +31,7 @@
 
 <svelte:window onkeydown={handleKeydown} onkeyup={handleKeyup} onblur={handleBlur} />
 
-<div class:alt-pressed={altPressed}>
+<div class="wrapper" class:alt-pressed={altPressed}>
   <Carousel />
 
   <Nav />
@@ -60,21 +60,19 @@
 
 <style>
   :global(body) {
+    --cursor: url('$lib/assets/myArrow.svg'), auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: var(--spacing-16);
+    height: auto;
+    cursor: var(--cursor);
+    background-color: rgb(107, 107, 107);
   }
 
-  :global(section:last-of-type) {
-    margin-bottom: 100px;
-  }
-
-  div {
-    margin-top: var(--spacing-32);
+  .wrapper {
+    padding-block: var(--spacing-32) 100px;
     max-width: 1000px;
     width: 100%;
-    height: fit-content;
   }
 
   .rainbow {
@@ -83,6 +81,10 @@
     background-color: var(--section-bg);
     padding: var(--spacing-16);
     margin-bottom: var(--spacing-32);
+
+    div {
+      margin-top: var(--spacing-32);
+    }
   }
 
   .demo {
