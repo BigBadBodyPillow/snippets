@@ -21,6 +21,7 @@
   let moveArea: HTMLDivElement;
   let movementDirections = $state<Direction[]>([]);
   let petRotation = $state(0);
+  let isWalking = $state(false);
   let targetPosition: Coordinates = { x: 0, y: 0 };
   let animationFrame: number | null = null;
   let lastFrameTime: number | null = null;
@@ -51,6 +52,7 @@
     if (distance <= distanceToMove || distance < 0.1) {
       updatePetDirection({ x: deltaX, y: deltaY });
       petPosition = { ...targetPosition };
+      isWalking = false;
       lastFrameTime = null;
       isFollowing = false;
       return;
@@ -59,6 +61,7 @@
     const progress = distanceToMove / distance;
     const movement = { x: deltaX * progress, y: deltaY * progress };
     updatePetDirection(movement);
+    isWalking = true;
     petPosition = {
       x: petPosition.x + movement.x,
       y: petPosition.y + movement.y
@@ -74,6 +77,7 @@
 
   function stopFollowing() {
     isFollowing = false;
+    isWalking = false;
     targetPosition = { ...petPosition };
     if (animationFrame !== null) cancelAnimationFrame(animationFrame);
     animationFrame = null;
@@ -225,6 +229,7 @@
   >
     <div
       class="pet"
+      class:walking={isWalking}
       style="transform: translate3d({petPosition.x}px, {petPosition.y}px, 0) rotate({petRotation}deg)"
       aria-hidden="true"
     ></div>
@@ -256,9 +261,27 @@
     width: var(--pet-size);
     height: var(--pet-size);
 
-    background: url('./cat.svg');
+    background: url('./AnimationSet.svg');
+    background-size: 1400% 1900%;
+    background-position: 0 0;
     background-repeat: no-repeat;
     pointer-events: none;
     will-change: transform;
+  }
+
+  .pet.walking {
+    animation: walk 400ms steps(1, end) infinite;
+  }
+
+  @keyframes walk {
+    0%,
+    49.99% {
+      background-position: calc(var(--pet-size) * -1) 0;
+    }
+
+    50%,
+    100% {
+      background-position: calc(var(--pet-size) * -2) 0;
+    }
   }
 </style>
