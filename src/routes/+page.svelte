@@ -66,7 +66,6 @@
     align-items: center;
     height: auto;
     cursor: var(--cursor);
-    background-color: rgb(107, 107, 107);
   }
 
   .wrapper {
