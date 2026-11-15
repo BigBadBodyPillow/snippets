@@ -1,6 +1,7 @@
 <script lang="ts">
   import Acordian from '../components/Acordian.svelte';
   import Carousel from '../components/Carousel/Carousel.svelte';
+  import ChipFade from '../components/ChipFade/ChipFade.svelte';
   import Cursor from '../components/Cursor/Cursor.svelte';
   import Nav from '../components/Nav/Nav.svelte';
   import Popover from '../components/Popover.svelte';
@@ -56,6 +57,8 @@
   <TiltableCard />
 
   <Cursor />
+
+  <ChipFade />
 </div>
 
 <style>

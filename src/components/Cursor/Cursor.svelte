@@ -192,19 +192,19 @@
   function updatePetAppearance() {
     switch (movementDirections.join(',')) {
       case 'up':
-        petRotation = 90;
+        petRotation = 0;
         break;
       case 'up,right':
-        petRotation = 135;
+        petRotation = -45;
         break;
       case 'right':
-        petRotation = 180;
+        petRotation = 0;
         break;
       case 'down,right':
-        petRotation = -135;
+        petRotation = 45;
         break;
       case 'down':
-        petRotation = -90;
+        petRotation = 0;
         break;
       case 'down,left':
         petRotation = -45;
@@ -230,6 +230,9 @@
     <div
       class="pet"
       class:walking={isWalking}
+      class:walking-right={isWalking && movementDirections.includes('right')}
+      class:walking-up={isWalking && movementDirections.join(',') === 'up'}
+      class:walking-down={isWalking && movementDirections.join(',') === 'down'}
       style="transform: translate3d({petPosition.x}px, {petPosition.y}px, 0) rotate({petRotation}deg)"
       aria-hidden="true"
     ></div>
@@ -237,7 +240,11 @@
 
   <div class="about">
     <h2 class="title">Cursor pet</h2>
-    <p class="description">Move your pointer around the box and the cat will follow.</p>
+    <p class="description">
+      Pet following the cursor. inspired by <a href="https://github.com/adryd325/oneko.js/"
+        >Oneko.js</a
+      >
+    </p>
   </div>
 </section>
 
@@ -247,6 +254,7 @@
     width: 100%;
     background-color: var(--section-bg);
     padding: var(--spacing-16);
+    margin-bottom: var(--spacing-32);
   }
 
   .demo {
@@ -262,7 +270,7 @@
     height: var(--pet-size);
 
     background: url('./AnimationSet.svg');
-    background-size: 1400% 1900%;
+    background-size: 900% 400%;
     background-position: 0 0;
     background-repeat: no-repeat;
     pointer-events: none;
@@ -273,15 +281,63 @@
     animation: walk 400ms steps(1, end) infinite;
   }
 
+  .pet.walking-right {
+    animation: walk-right 400ms steps(1, end) infinite;
+  }
+
+  .pet.walking-up {
+    animation: walk-up 400ms steps(1, end) infinite;
+  }
+
+  .pet.walking-down {
+    animation: walk-down 400ms steps(1, end) infinite;
+  }
+
   @keyframes walk {
     0%,
     49.99% {
-      background-position: calc(var(--pet-size) * -1) 0;
+      background-position: calc(var(--pet-size) * -1) 0; /* sprite position 2 */
     }
 
     50%,
     100% {
-      background-position: calc(var(--pet-size) * -2) 0;
+      background-position: calc(var(--pet-size) * -2) 0; /* sprite position 3 */
+    }
+  }
+
+  @keyframes walk-right {
+    0%,
+    49.99% {
+      background-position: calc(var(--pet-size) * -3) 0; /* sprite position 4 */
+    }
+
+    50%,
+    100% {
+      background-position: calc(var(--pet-size) * -4) 0; /* sprite position 5 */
+    }
+  }
+
+  @keyframes walk-up {
+    0%,
+    49.99% {
+      background-position: calc(var(--pet-size) * -5) 0; /* sprite position 6 */
+    }
+
+    50%,
+    100% {
+      background-position: calc(var(--pet-size) * -6) 0; /* sprite position 7 */
+    }
+  }
+
+  @keyframes walk-down {
+    0%,
+    49.99% {
+      background-position: calc(var(--pet-size) * -7) 0; /* sprite position 8 */
+    }
+
+    50%,
+    100% {
+      background-position: calc(var(--pet-size) * -8) 0; /* sprite position 9 */
     }
   }
 </style>
