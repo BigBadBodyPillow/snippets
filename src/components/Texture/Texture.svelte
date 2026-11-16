@@ -54,7 +54,7 @@
     flex-direction: column;
     cursor: pointer;
 
-    gap: 0.33rem;
+    gap: 1rem;
     color: var(--muted);
 
     input {

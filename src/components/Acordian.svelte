@@ -1,7 +1,7 @@
 <section>
   <div class="demo">
     <details open>
-      <summary>Why are the prices so good?</summary>
+      <summary>Lorem ipsum dolor sit amet consectetur?</summary>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, ipsam. Minus ex sed amet
         voluptas consectetur eaque similique fuga atque tempore quis nihil magnam consequuntur totam
@@ -9,7 +9,7 @@
       </p>
     </details>
     <details>
-      <summary>How do I request a refund?</summary>
+      <summary>Lorem ipsum dolor sit amet?</summary>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio pariatur temporibus ipsa
         blanditiis molestiae illo, omnis ad similique repellat perspiciatis cumque sed. Praesentium
@@ -19,7 +19,7 @@
       </p>
     </details>
     <details>
-      <summary>Is there a free trial for the subscription?</summary>
+      <summary>Lorem ipsum dolor sit, amet consectetur adipisicing?</summary>
       <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam sed laborum amet saepe?</p>
     </details>
   </div>
