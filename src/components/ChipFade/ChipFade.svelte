@@ -1,13 +1,31 @@
+<script lang="ts">
+  let chipContainer: HTMLDivElement | undefined = $state();
+
+  function scroll(direction: 'left' | 'right') {
+    if (!chipContainer) return;
+
+    chipContainer.scrollBy({
+      left: direction === 'right' ? 100 : -100,
+      behavior: 'smooth'
+    });
+  }
+</script>
+
 <section>
   <div class="demo">
     <div class="outer">
       <div class="container">
-        <button class="scroll-button left">&lt;</button>
-        <div class="chip-container">
-          <div class="chip">Chip</div>
-          <div class="chip">Chip</div>
-          <div class="chip">Chip</div>
-          <div class="chip">Chip</div>
+        <button
+          class="scroll-button left"
+          onclick={() => scroll('left')}
+          aria-label="scroll lefttt"
+        >
+          <!-- &lt; -->
+          <!-- ◀ -->
+          ⫷
+        </button>
+
+        <div class="chip-container" bind:this={chipContainer}>
           <div class="chip">Chip</div>
           <div class="chip">Chip</div>
           <div class="chip">Chip</div>
@@ -16,7 +34,19 @@
           <div class="chip">Chip</div>
           <div class="chip">Chip</div>
         </div>
-        <button class="scroll-button right">&gt;</button>
+
+        <button
+          class="scroll-button right"
+          onclick={() => scroll('right')}
+          aria-label="scroll right"
+        >
+          <!-- &gt; -->
+
+          <!-- ▶ -->
+          <!--  ▷ -->
+
+          ⫸
+        </button>
       </div>
     </div>
   </div>
@@ -39,6 +69,7 @@
     --button-width: 40px;
     --chip-container-width: calc(400px + calc(var(--button-width) * 2));
     --scroll-button-color: rgb(162, 1, 1);
+    --fade-width: 56px;
 
     --demo-background: rgb(48, 61, 46);
     max-height: 800px;
@@ -72,36 +103,78 @@
   }
 
   .outer {
-    border-radius: 13px;
-    background-color: rgba(0, 0, 0, 0.159);
+    border-radius: calc(var(--radius) * 2);
+    background-color: light-dark(rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.15));
     backdrop-filter: blur(4px);
     padding: 1.66rem;
   }
 
   .container {
-    padding: 2rem;
-    background-color: var(--container-background);
-    border-radius: var(--radius);
-    width: 100%;
-    max-width: var(--chip-container-width);
     position: relative;
+
+    max-width: var(--chip-container-width);
+    width: 100%;
+
     display: flex;
     align-items: center;
+
+    padding: 2rem;
+    background-color: var(--container-background);
+    border-radius: CALC(var(--radius) * 1.5);
+
     gap: 0.75rem;
   }
 
   .chip-container {
+    position: relative;
+
     display: flex;
     gap: 1rem;
-    overflow: scroll;
+
+    overflow-x: auto;
     scrollbar-width: none;
     ::-webkit-scrollbar {
       display: none;
     }
+
+    /* fade to indicate scrollabe */
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 var(--fade-left),
+      #000 calc(100% - var(--fade-right)),
+      transparent
+    );
+    animation: fade linear both;
+    animation-timeline: scroll(self inline);
   }
 
-  .chip-container::before {
-    /* TODO Fade gradient  */
+  @property --fade-left {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+  }
+
+  @property --fade-right {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+  }
+
+  @keyframes fade {
+    0% {
+      --fade-left: 0px;
+      --fade-right: var(--fade-width);
+    }
+    8%,
+    92% {
+      --fade-left: var(--fade-width);
+      --fade-right: var(--fade-width);
+    }
+    100% {
+      --fade-left: var(--fade-width);
+      --fade-right: 0px;
+    }
   }
 
   .chip {
@@ -109,9 +182,13 @@
 
     font-family: var(--font-roboto-mono);
     color: hsl(from var(--text) h s calc(l - 15));
+
     background-color: var(--chip-background);
     border-radius: var(--radius);
+
     cursor: pointer;
+
+    scroll-snap-align: start;
   }
 
   .scroll-button {
