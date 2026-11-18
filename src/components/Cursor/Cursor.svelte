@@ -12,7 +12,7 @@
   const cursorBufferRadius = 10;
   const cursorResumeRadius = 15;
   const petRadius = Math.hypot(petSize / 2, petSize / 2);
-  const petSpeed = 300;
+  const petSpeed = 150;
   const directionEnterTolerance = 12;
   const directionExitTolerance = directionEnterTolerance / 2;
   const directionDeadZone = 0.1;

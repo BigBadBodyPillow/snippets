@@ -103,6 +103,7 @@
   }
 
   .outer {
+    /* --radius: 0px; */
     border-radius: calc(var(--radius) * 2);
     background-color: light-dark(rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.15));
     backdrop-filter: blur(4px);

@@ -6,6 +6,7 @@
   import Nav from '../components/Nav/Nav.svelte';
   import Popover from '../components/Popover.svelte';
   import RainbowLine from '../components/RainbowLine.svelte';
+  import RangeInput from '../components/RangeInput.svelte';
   import Texture from '../components/Texture/Texture.svelte';
   import TiltableCard from '../components/TiltableCard/TiltableCard.svelte';
 
@@ -59,6 +60,8 @@
   <Cursor />
 
   <ChipFade />
+
+  <RangeInput />
 </div>
 
 <style>
