@@ -172,12 +172,14 @@
     z-index: -1;
     background: inherit;
     filter: blur(80px) saturate(2.8);
+    /*filter: blur(80px) saturate(10);  For nixeus profile picture */
     scale: 1.1;
   }
 
   @media (prefers-color-scheme: light) {
     .picture:before {
       filter: blur(80px) saturate(10);
+      /*filter: blur(80px) saturate(20);  For nixeus profile picture */
       scale: 0.9;
     }
   }

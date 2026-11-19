@@ -208,8 +208,17 @@
     cursor: pointer;
 
     font-weight: bold;
+    user-select: none;
+
+    transition:
+      color 0.25s,
+      border-color 0.25s,
+      background-color 0.25s;
   }
-  .scroll-button:hover {
+  .scroll-button:hover,
+  .scroll-button:focus-visible {
+    color: hsl(from var(--scroll-button-color) h s calc(l + 10));
+    border-color: hsl(from var(--scroll-button-color) h s calc(l + 10));
     background-color: light-dark(
       hsl(from var(--bg) h s calc(l - 5)),
       hsl(from var(--bg) h s calc(l + 2))
