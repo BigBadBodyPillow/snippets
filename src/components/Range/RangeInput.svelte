@@ -1,16 +1,40 @@
 <script lang="ts">
+  import soundUrl from './audio-editor-output(1).mp3';
+
   let value = $state(50);
   let track: HTMLDivElement | undefined;
   let selector: HTMLDivElement | undefined;
   let isDragging: boolean = false;
   let dragOffset = 0;
+  const minimumSoundIntervalMs = 30;
+  let lastSoundPlayedAt = 0;
+  const volume = 0.1;
+
+  function playSound() {
+    const now = performance.now();
+
+    // limit instances of sound
+    if (now - lastSoundPlayedAt < minimumSoundIntervalMs) return;
+
+    const sound = new Audio(soundUrl);
+    sound.volume = volume;
+    lastSoundPlayedAt = now;
+    sound.play();
+  }
+
+  function setValue(nextValue: number) {
+    if (nextValue === value) return;
+
+    value = nextValue;
+    playSound();
+  }
 
   function updateValue(centerX: number) {
     if (!track) return;
     const bounds = track.getBoundingClientRect();
     if (bounds.width === 0) return;
 
-    value = Math.round(Math.max(0, Math.min(1, (centerX - bounds.left) / bounds.width)) * 100);
+    setValue(Math.round(Math.max(0, Math.min(1, (centerX - bounds.left) / bounds.width)) * 100));
   }
 
   function handlePointerDown(event: PointerEvent) {
@@ -30,22 +54,27 @@
     isDragging = false;
   }
 
+  // keyboard events
   function handleKeyDown(event: KeyboardEvent) {
     if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
       event.preventDefault();
-      value = Math.max(0, value - 1);
+      setValue(Math.max(0, value - 1));
     } else if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
       event.preventDefault();
-      value = Math.min(100, value + 1);
+      setValue(Math.min(100, value + 1));
     }
+  }
+
+  function handleWheel(event: WheelEvent) {
+    if (!selector || document.activeElement !== selector || event.deltaY === 0) return;
+
+    event.preventDefault();
+    setValue(Math.max(0, Math.min(100, value + (event.deltaY < 0 ? 1 : -1))));
   }
 </script>
 
 <section>
   <div class="demo">
-    <!-- == TODO == -->
-    <!-- Sound? -->
-    <!-- scroll -->
     <div class="slider">
       <div
         class="selector"
@@ -59,15 +88,14 @@
         onpointermove={handlePointerMove}
         onpointerup={handlePointerUp}
         onkeydown={handleKeyDown}
+        onwheel={handleWheel}
         bind:this={selector}
       >
-        <!-- would be redundant to show display for screenreaders -->
+        <!-- redundant to show otehrwise becuiase of aria lables -->
         <span aria-hidden="true">{value}</span>
       </div>
 
-      <div class="track" bind:this={track}>
-        <div class="markers"></div>
-      </div>
+      <div class="track" bind:this={track}></div>
     </div>
   </div>
 
@@ -135,7 +163,7 @@
     width: var(--track-width);
   }
 
-  /* this is the hover detector. the before is the actuall visible element from the users presepctive */
+  /* this is the hover detector. the hover is the acutall element */
   .selector {
     position: absolute;
     top: 50%;
@@ -178,11 +206,6 @@
   }
 
   .selector span {
-    --value-display-background: light-dark(
-      hsl(from var(--track-background) h s calc(l + 10)),
-      hsl(from var(--track-background) h s calc(l + 20))
-    );
-
     position: absolute;
     top: 0;
 
