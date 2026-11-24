@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Card from './Card.svelte';
+
   const cards = [
     { title: 'Item 01', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
     { title: 'Item 02', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
@@ -25,10 +27,11 @@
   <div class="demo">
     <ul class="carousel">
       {#each cards as card, index (index)}
-        <li class="card">
+        <!-- <li class="card">
           <span>{card.title}</span>
           <p>{card.content}</p>
-        </li>
+        </li> -->
+        <Card title={card.title} content={card.content} />
       {/each}
     </ul>
   </div>
@@ -36,10 +39,12 @@
   <div class="about">
     <h2 class="title">Carousel</h2>
     <p class="description">
-      Inspired by <a href="https://www.youtube.com/@coding2go">Coding2GO's</a>
-      <a href="https://youtu.be/6Pd6B0ZmT6s?si=gC-mOQXHXrZb3-jh">Video</a> on new experimental / low support
-      css only UI features that previously required JavaScrip
+      Inspired by
+      <a href="https://youtu.be/6Pd6B0ZmT6s?si=gC-mOQXHXrZb3-jh">this video</a> on new experimental /
+      low support css only UI features that previously required JavaScrip.
     </p>
+    <a href="https://easingwizard.com/"> easing wizard </a> linear timing function
+    <br />
     <br />
     <a href="https://caniuse.com/?search=%3A%3Ascroll-button%28%29">Support</a>
   </div>
@@ -60,44 +65,32 @@
     padding: 5rem;
 
     border: #fff;
-    background-color: rgb(19, 14, 14);
+    /* background-color: light-dark(rgb(255, 255, 255), rgb(19, 14, 14)); */
+    background-color: var(--background);
 
-    --card-title: white;
-    --cart-text: hsl(from var(--text) h s 73);
-    --card-background: rgb(36, 32, 32);
-    --border: rgb(66, 66, 66);
-    --accent: rgb(105, 6, 19);
+    --cart-text: light-dark(
+      hsl(from var(--text) h s calc(l + 25)),
+      hsl(from var(--text) h s calc(l - 40))
+    );
+    --card-background: light-dark(rgb(255, 247, 247), rgb(36, 32, 32));
+
+    --marker-width: 1.5rem;
+    --marker-height: 0.6rem;
   }
 
   .carousel {
     anchor-name: --carousel;
-    width: 100%;
     display: flex;
     gap: 1em;
+    width: 100%;
+
     scroll-behavior: smooth;
     overflow-x: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
     scroll-snap-type: x mandatory;
+
     scroll-marker-group: after;
-  }
-  .card {
-    min-width: 250px;
-    scroll-snap-align: start;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    background: var(--card-background);
-    padding: 2em;
-    color: var(--cart-text);
-    border: 1px solid var(--border);
-    list-style: none;
-
-    transition: transform 200ms;
-  }
-
-  .card:hover {
-    transform: scale(0.95) rotate(2deg);
   }
 
   .carousel::-webkit-scrollbar {
@@ -107,17 +100,21 @@
   }
 
   .carousel::scroll-button(*) {
-    border: none;
-    background-color: var(--accent);
-    font-family: Consolas;
-    font-size: 2rem;
-    color: var(--text);
-    height: 40px;
-    width: 40px;
-    padding-bottom: 0.1em;
-    cursor: pointer;
     position: fixed;
     position-anchor: --carousel;
+
+    width: 40px;
+    height: 40px;
+
+    font-family: var(--font-roboto-mono);
+    font-size: 2rem;
+
+    color: var(--text);
+    background-color: var(--accent);
+    padding-bottom: 0.1em; /*Magic number*/
+    border: none;
+
+    cursor: pointer;
   }
 
   .carousel::scroll-button(left) {
@@ -133,32 +130,15 @@
   }
 
   .carousel::scroll-button(*):disabled {
-    opacity: 0.5;
-    cursor: var(--cursor);
+    background-color: hsl(from var(--accent) h s l / 0.5);
+    color: var(--text-invert);
+    cursor: not-allowed;
   }
 
   .carousel::scroll-marker-group {
     display: flex;
     justify-content: center;
     gap: 0.5rem;
-    padding-top: 1.25rem;
-  }
-
-  .card::scroll-marker {
-    content: '';
-    height: 0.6rem;
-    width: 1.34rem;
-    background: var(--border);
-  }
-
-  .card::scroll-marker:target-current {
-    background: var(--accent);
-  }
-
-  .card span {
-    color: var(--card-title);
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 0.1rem;
+    padding-top: 2rem;
   }
 </style>

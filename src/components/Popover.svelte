@@ -41,20 +41,41 @@
   .popover {
     gap: 1rem;
     grid-template-columns: auto 1fr;
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    padding: var(--spacing-32);
-    background: var(--background);
+
     color: var(--text);
+
+    background: hsl(from var(--background) h s l / 0.2);
+    backdrop-filter: blur(4px);
+    border: 1px solid hsl(from var(--border) h s l / 0.2);
+    border-radius: 2rem;
+    @supports (corner-shape: squircle) {
+      corner-shape: squircle;
+      border-radius: 5rem;
+    }
+
     box-shadow: 0 8px 32px hsl(0 0% 0% / 0.12);
+
+    padding: var(--spacing-32);
     inline-size: min(90vw, 55rem);
-    /* width: fit-content; */
 
     opacity: 0;
-    translate: 0 -30px;
 
     transition-property: display, overlay, opacity, translate;
-    transition-duration: 0.75s;
+    transition-duration: 2s;
+    transition-timing-function: linear(
+      0,
+      0.029 0.8%,
+      0.13 1.8%,
+      0.908 7.2%,
+      1.051 9.1%,
+      1.112 11.2%,
+      1.116 12.2%,
+      1.106 13.4%,
+      1.007 19.5%,
+      0.987 23.1%,
+      1.001 35%,
+      1
+    );
     transition-behavior: allow-discrete;
 
     &:popover-open {
@@ -64,7 +85,7 @@
 
       @starting-style {
         opacity: 0;
-        translate: 0 -30px;
+        translate: 0 -100px;
       }
     }
 
@@ -79,21 +100,30 @@
 
   .trigger {
     all: unset;
+    anchor-name: --test;
     display: flex;
     height: fit-content;
     align-items: center;
-    cursor: pointer;
+
     color: var(--text);
+
     font: inherit;
-    anchor-name: --test;
     font-weight: 600;
     font-size: var(--font-16);
 
+    text-underline-offset: 6px;
+
+    text-decoration: underline dashed 2px;
+
+    transition: color 0.25s;
+
     &:hover {
       color: var(--accent);
-      text-decoration: underline dashed;
+      text-decoration: underline dashed 2px;
       text-underline-offset: 6px;
     }
+
+    cursor: pointer;
   }
 
   /* .trigger-title {
@@ -114,7 +144,7 @@
     .popover-description {
       margin-block-start: var(--spacing-8);
       font-size: var(--font-16);
-      color: hsl(from var(--text) h s l / 0.8);
+      color: hsl(from var(--text) h s l / 0.7);
       line-height: 1.6;
     }
   }

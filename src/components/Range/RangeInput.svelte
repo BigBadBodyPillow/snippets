@@ -1,5 +1,5 @@
 <script lang="ts">
-  import soundUrl from './audio-editor-output(1).mp3';
+  import soundUrl from './comb.mp3';
 
   let value = $state(50);
   let track: HTMLDivElement | undefined;
