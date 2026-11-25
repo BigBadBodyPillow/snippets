@@ -64,13 +64,6 @@
       setValue(Math.min(100, value + 1));
     }
   }
-
-  function handleWheel(event: WheelEvent) {
-    if (!selector || document.activeElement !== selector || event.deltaY === 0) return;
-
-    event.preventDefault();
-    setValue(Math.max(0, Math.min(100, value + (event.deltaY < 0 ? 1 : -1))));
-  }
 </script>
 
 <section>
@@ -88,7 +81,6 @@
         onpointermove={handlePointerMove}
         onpointerup={handlePointerUp}
         onkeydown={handleKeyDown}
-        onwheel={handleWheel}
         bind:this={selector}
       >
         <!-- redundant to show otehrwise becuiase of aria lables -->
