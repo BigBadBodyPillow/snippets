@@ -7,6 +7,7 @@
   import Popover from '../components/Popover.svelte';
   import RainbowLine from '../components/RainbowLine.svelte';
   import RangeInput from '../components/Range/RangeInput.svelte';
+  import RingButton from '../components/RingButton/RingButton.svelte';
   import Texture from '../components/Texture/Texture.svelte';
   import TiltableCard from '../components/TiltableCard/TiltableCard.svelte';
 
@@ -62,6 +63,8 @@
   <ChipFade />
 
   <RangeInput />
+
+  <RingButton />
 </div>
 
 <style>

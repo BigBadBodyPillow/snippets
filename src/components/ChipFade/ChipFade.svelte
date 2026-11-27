@@ -121,7 +121,7 @@
 
     padding: 2rem;
     background-color: var(--container-background);
-    border-radius: CALC(var(--radius) * 1.5);
+    border-radius: calc(var(--radius) * 1.5);
 
     gap: 0.75rem;
   }
