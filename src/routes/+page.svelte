@@ -8,6 +8,7 @@
   import RainbowLine from '../components/RainbowLine.svelte';
   import RangeInput from '../components/Range/RangeInput.svelte';
   import RingButton from '../components/RingButton/RingButton.svelte';
+  import RingButton2 from '../components/RingButton/RingButton2.svelte';
   import Texture from '../components/Texture/Texture.svelte';
   import TiltableCard from '../components/TiltableCard/TiltableCard.svelte';
 
@@ -65,6 +66,8 @@
   <RangeInput />
 
   <RingButton />
+
+  <RingButton2 />
 </div>
 
 <style>

@@ -14,6 +14,8 @@
       <Segment ariaLabel="7" />
       <Segment ariaLabel="8" />
     </div>
+
+    <div class="edge-fade" aria-hidden="true"></div>
   </div>
 
   <div class="about">
@@ -43,30 +45,12 @@
     display: grid;
     place-items: center;
     position: relative;
+    isolation: isolate;
 
     --atlas-background: #0a0b14;
     background-color: var(--atlas-background);
 
     overflow: hidden;
-
-    mask-image:
-      linear-gradient(
-        to right,
-        transparent,
-        var(--atlas-background) 20%,
-        var(--atlas-background) 80%,
-        transparent 100%
-      ),
-      linear-gradient(
-        to bottom,
-        transparent,
-        var(--atlas-background) 8%,
-        var(--atlas-background) 92%,
-        transparent 100%
-      );
-    mask-size: 100% 100%;
-    mask-repeat: no-repeat;
-    mask-composite: intersect;
   }
   .demo::after,
   .demo::before {
@@ -90,7 +74,6 @@
 
     animation: ringRotation 50s ease-in-out infinite;
   }
-
   @keyframes ringRotation {
     12.5% {
       transform: rotate(60deg);
@@ -118,6 +101,20 @@
     to {
       transform: rotate(1turn);
     }
+  }
+
+  .edge-fade {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image: linear-gradient(
+      to right,
+      var(--atlas-background),
+      transparent 20%,
+      transparent 80%,
+      var(--atlas-background)
+    );
   }
 
   .ring-buttons {
